@@ -12,7 +12,7 @@ name=Disconnected Islands Modified
 qgisMinimumVersion=3.0
 qgisMaximumVersion=4.99
 description=Finds disconnected "islands" in a transport network layer, so that a routing tool will work between all nodes, duplicates the selected line layer to modify geometry and make the lines closest to the select point layer converge onto with context. A tolerance field allows for imperfect topology. Now supports options for vertices. Original author "Peter Smythe @ AfriGIS"
-version=2.2.0
+version=2.3.1
 author=Magnus Jespersgaard
 email=magnus.jespersgaard@gmail.com
 
@@ -25,6 +25,7 @@ about=This plugin runs on a polyline layer, building up a road (or rail, etc.) n
     - via GitHub: https://github.com/gR1ox/QGISDisconnectedIslandsModified/tree/main/sample-data/islands.zip<br/>
     This plugin depends on the NetworkX module.  Mac OS X users need to install it manually, simply by executing, in a Terminal: sudo easy_install networkx.  Then restart QGIS.
 
+tracker=https://github.com/gR1ox/QGISDisconnectedIslandsModified/issues
 repository=https://github.com/gR1ox/QGISDisconnectedIslandsModified
 # End of mandatory metadata
 
@@ -32,6 +33,8 @@ repository=https://github.com/gR1ox/QGISDisconnectedIslandsModified
 
 # Uncomment the following line and add your changelog:
 changelog=
+	Version 2.3.1 (2026-11-13)
+	- Use of randbelow instead of randint because of QGIS security check when uploading plugins + comment of # nosec to avoid this problem
 	Version 2.3.0 (2026-11-13)
 	- Start of Disconnected islands modified to make lines converge on points with context
 	Version 2.2.0 (2026-05-18)
