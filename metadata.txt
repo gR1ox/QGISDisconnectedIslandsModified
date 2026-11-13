@@ -22,10 +22,10 @@ about=This plugin runs on a polyline layer, building up a road (or rail, etc.) n
 	DISCLAIMER: It does modify geometry, but instead of modifying the original geometry it creates a new layer on which it simply copies the original geometry and recreates it, and modifies that<br/>
     Sample data to test this plugin can be found:
     - in your plugins directory: ...QGIS/QGIS3/profiles/default/python/plugins/disconnected-islands-modified/sample-data/islands.zip
-    - via GitHub: https://github.com/AfriGIS-South-Africa/disconnected-islands/raw/master/sample-data/islands.zip<br/>
+    - via GitHub: https://github.com/gR1ox/QGISDisconnectedIslandsModified/tree/main/sample-data/islands.zip<br/>
     This plugin depends on the NetworkX module.  Mac OS X users need to install it manually, simply by executing, in a Terminal: sudo easy_install networkx.  Then restart QGIS.
 
-repository=https://github.com/AfriGIS-South-Africa/disconnected-islands.git
+repository=https://github.com/gR1ox/QGISDisconnectedIslandsModified
 # End of mandatory metadata
 
 # Recommended items:
@@ -61,7 +61,7 @@ changelog=
 # Tags are comma separated with spaces allowed
 tags=analysis, network analysis, network, polyline, processing, routing, topography
 
-homepage=https://www.afrigis.co.za/?disconnected-islands
+homepage=https://github.com/gR1ox/QGISDisconnectedIslandsModified
 category=Vector
 icon=icon.png
 # experimental flag

@@ -291,6 +291,7 @@
    <property name="openExternalLinks">
     <bool>true</bool>
    </property>
+
   </widget>
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
