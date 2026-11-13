@@ -1,0 +1,72 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.
+# Mandatory items:
+
+[general]
+name=Disconnected Islands Modified
+qgisMinimumVersion=3.0
+qgisMaximumVersion=4.99
+description=Finds disconnected "islands" in a transport network layer, so that a routing tool will work between all nodes, duplicates the selected line layer to modify geometry and make the lines closest to the select point layer converge onto with context. A tolerance field allows for imperfect topology. Now supports options for vertices. Original author "Peter Smythe @ AfriGIS"
+version=2.2.0
+author=Magnus Jespersgaard
+email=magnus.jespersgaard@gmail.com
+
+about=This plugin runs on a polyline layer, building up a road (or rail, etc.) network graph of connected links and make an lines close to the selected points converge on that point with context. It then analyses connected subgraphs, ones that are connected to each other, but not connected to isolated or floating links. It creates an additional attribute containing the group ID of the subgraph. This can then be used to style the layer with Categorised styles, or Zoom to selection. The disconnected links can then be fixed. <br/>
+	Version 2.1.0 introduces a new option to only use the start and end vertices of a road link (previously all vertices were considered.) A group ID of -1 (hidden) indicates a second road link with exactly the same start and end vertices as another road link, but probably with different in-between vertices. <br/>
+    Based on Detlev's answer to my question: http://gis.stackexchange.com/questions/184319/how-to-find-disconnected-islands-in-a-road-network-layer-using-qgis <br/>
+	DISCLAIMER: It does modify geometry, but instead of modifying the original geometry it creates a new layer on which it simply copies the original geometry and recreates it, and modifies that<br/>
+    Sample data to test this plugin can be found:
+    - in your plugins directory: ...QGIS/QGIS3/profiles/default/python/plugins/disconnected-islands-modified/sample-data/islands.zip
+    - via GitHub: https://github.com/AfriGIS-South-Africa/disconnected-islands/raw/master/sample-data/islands.zip<br/>
+    This plugin depends on the NetworkX module.  Mac OS X users need to install it manually, simply by executing, in a Terminal: sudo easy_install networkx.  Then restart QGIS.
+
+repository=https://github.com/AfriGIS-South-Africa/disconnected-islands.git
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+changelog=
+	Version 2.3.0 (2026-11-13)
+	- Start of Disconnected islands modified to make lines converge on points with context
+	Version 2.2.0 (2026-05-18)
+    - Port to QGIS 4 / Qt 6 (PyQt6) while remaining compatible with QGIS 3<br/>
+    Version 2.1.0 (2024-07-10)
+    - Support options for vertices: all or only start & end<br/>
+	Version 2.0.2 (2020-11-24)
+    - Fix for NetworkX.connected_component_subgraphs removed in v2.4<br/>
+    Version 2.0.1 (2018-12-06)
+    - Update tracker to GitHub, sample data path<br/>
+    Version 2.0.0 (2018-11-30)
+    - Upgrade to QGIS v3<br/>
+    Version 1.0.4 (2018-11-23)
+    - Fix for NetworkX upgrade from v1 to v2<br/>
+    Version 1.0.3 (2016-04-11)
+    - handle error for ESRI Shapefile if attribute name is larger than 10 characters
+    - add general exception handling
+    - compress sample data into a single ZIP file for easy direct download from GitHub<br/>
+    Version 1.0.2 (2016-04-08)
+    - implement check for NetworkX module and prompt to install (primarily for Mac OS X)
+    - handle empty layer name (none selected) <br/>
+    Version 1.0.1 (2016-04-07)
+    - fixed cut off icon & heading size for Mac OS X
+    - fixed plugin unload (from wrong menu)
+    - removed deprecated setCacheImage
+
+# Tags are comma separated with spaces allowed
+tags=analysis, network analysis, network, polyline, processing, routing, topography
+
+homepage=https://www.afrigis.co.za/?disconnected-islands
+category=Vector
+icon=icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
