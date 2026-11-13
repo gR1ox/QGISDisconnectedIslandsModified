@@ -55,7 +55,7 @@ from qgis.core import (
     QgsCategorizedSymbolRenderer,
     QgsGeometry,
 )
-from random import randint
+from secrets import randbelow
 
 
 def _align_left_vcenter():
@@ -415,7 +415,7 @@ class DisconnectedIslandsModified(object):
                     firstCat = True
                     for cat in groups:
                         symbol = QgsSymbol.defaultSymbol(newLineLayer.geometryType())
-                        symbol.setColor(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
+                        symbol.setColor(QColor(randbelow(256), randbelow(256), randbelow(256))) # nosec
                         if firstCat:
                             firstCat = False
                         else:
