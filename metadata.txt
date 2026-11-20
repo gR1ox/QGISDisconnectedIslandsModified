@@ -12,7 +12,7 @@ name=Disconnected Islands Modified
 qgisMinimumVersion=3.0
 qgisMaximumVersion=4.99
 description=Finds disconnected "islands" in a transport network layer, so that a routing tool will work between all nodes, duplicates the selected line layer to modify geometry and make the lines closest to the select point layer converge onto with context. A tolerance field allows for imperfect topology. Now supports options for vertices. Original author "Peter Smythe @ AfriGIS"
-version=2.3.1
+version=2.3.2
 author=Magnus Jespersgaard
 email=magnus.jespersgaard@gmail.com
 
@@ -33,6 +33,8 @@ repository=https://github.com/gR1ox/QGISDisconnectedIslandsModified
 
 # Uncomment the following line and add your changelog:
 changelog=
+    Version 2.3.2 (2026-11-20)
+    - Remade copying of old layer, since it changed its geometry, now prompts user to save the new layer on their computer.
 	Version 2.3.1 (2026-11-13)
 	- Use of randbelow instead of randint because of QGIS security check when uploading plugins + comment of # nosec to avoid this problem
 	Version 2.3.0 (2026-11-13)
