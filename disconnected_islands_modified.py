@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 from builtins import range
 from builtins import object
+from dbm import error
 
 # Use qgis.PyQt so the plugin works under both PyQt5 (QGIS 3) and PyQt6 (QGIS 4).
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
@@ -234,38 +235,12 @@ class DisconnectedIslandsModified(object):
             return -1
         return 0
     
-    def distanceFromPointToLine(self, point0, point1, point2):
-        import math
-        x0=point0[0]
-        x1=point1[0]
-        x2=point2[0]
-        y0=point0[1]
-        y1=point1[1]
-        y2=point2[1]
-        
-        #Proof: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-        upperPartEq = abs((y2-y1)*x0-(x2-x1)*y0+x2*y1-y2*x1)
-        underPartEq = math.sqrt((y2-y1)**2+(x2-x1)**2)
-        distance = upperPartEq/underPartEq
-        return distance
-        
-    def distanceBetweenPoints(self, point1, point2):
-        import math
-        x1=point1[0]
-        x2=point2[0]
-        y1=point1[1]
-        y2=point2[1]
-        
-        # Proof: https://en.wikipedia.org/wiki/Euclidean_distance
-        distance = math.sqrt((x2-x1)**2+(y2-y1)**2)
-        return distance
-
     # TODO: Let user decide the max tolerance for converging
     # This method WILL change the data, make sure to create, or use on Duplicate data
-    def manipulateLineGeometryToStopAtPoints(self, lineLayer, pointLayer, maxDistanceForChange):
+    def manipulateLineGeometryToStopAtPoints(self, newLineLayer, pointLayer, maxDistanceForChange):
         from qgis.core import QgsGeometry, QgsPointXY
         
-        lineLayer.beginEditCommand("Change to Lines that overlap, within a tolerance to converge and stop at point...")
+        newLineLayer.beginEditCommand("Change to Lines that overlap, within a tolerance to converge and stop at point...")
         # Check each line against all points, with the euclidean distance formula
         # IF the line is close enough, change the closest point of the line, to have the cords of the stopping point
        
@@ -279,7 +254,7 @@ class DisconnectedIslandsModified(object):
         
         max_sqr_dist = maxDistanceForChange**2
         
-        for lineFeat in lineLayer.getFeatures():
+        for lineFeat in newLineLayer.getFeatures():
             lineGeom = lineFeat.geometry()
             QgsGeometry.convertToSingleType(lineGeom)       # QGIS 3.x seems to load single LineString as MultiLineString??
             line = lineGeom.asPolyline()
@@ -297,7 +272,7 @@ class DisconnectedIslandsModified(object):
                     else:
                         line = line[:afterVertex] + [point]
                     newGeom = QgsGeometry.fromPolylineXY(line)
-                    lineLayer.changeGeometry(lineFeat.id(), newGeom)
+                    newLineLayer.changeGeometry(lineFeat.id(), newGeom)
                     break
         return 0
 
@@ -340,12 +315,58 @@ class DisconnectedIslandsModified(object):
                 return -1
 
             try:
-                previousEditingMode = True
-                if not lineLayer.isEditable():
-                    #Create duplication of the selected line layer
-                    newLineLayer = self.iface.addVectorLayer(lineLayer.source(), lineLayer.name() + "_modfied", "ogr")
+                #Create duplication of the selected line layer
+                from qgis.PyQt.QtWidgets import QFileDialog
+                from qgis.core import QgsVectorFileWriter, QgsVectorLayer
+
+                # Ask for a NEW .gpkg path; 
+                output_path, _ = QFileDialog.getSaveFileName(
+                    self.iface.mainWindow(),
+                    "Save modified copy",
+                    "LayerModified.gpkg",
+                    "GeoPackage (*.gpkg)",
+                )
+                if not output_path:
+                    return
+
+                options = QgsVectorFileWriter.SaveVectorOptions()
+                options.driverName = "GPKG"
+                options.fileEncoding = "UTF-8"
+
+                error, error_message, *_ = QgsVectorFileWriter.writeAsVectorFormatV3(
+                    lineLayer,
+                    output_path,
+                    QgsProject.instance().transformContext(),
+                    options,
+                )
+                if error != QgsVectorFileWriter.NoError:
+                    self.iface.messageBar().pushMessage(
+                    "Error", "Could not copy layer: {}".format(error_message),
+                    level=Qgis.Critical,
+                    )
+                    return
+
+                newLineLayer = QgsVectorLayer(
+                    output_path, lineLayer.name() + "_modified", "ogr"
+                )
+                if not newLineLayer.isValid():
+                    self.iface.messageBar().pushMessage(
+                        "Error", "The copied layer could not be loaded.",
+                        level=Qgis.Critical,
+                    )
+                    return
+
+                QgsProject.instance().addMapLayer(newLineLayer)
+                if not newLineLayer.startEditing():
+                    self.iface.messageBar().pushMessage(
+                        "Error", "Could not start editing the copied layer.",
+                        level=Qgis.Critical,
+                    )
+                    return
+                if not newLineLayer:
+                    print("Failed to create and load new layer")
+                else:
                     newLineLayer.startEditing()
-                    previousEditingMode = False
 
                 attrIdx = self.getAttributeIndex(newLineLayer)
                 if attrIdx < 0:
